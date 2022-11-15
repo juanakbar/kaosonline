@@ -1,10 +1,13 @@
 <?php
 
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\WelcomeController;
+use App\Http\Controllers\DarkModeController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ColorSchemeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +20,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('dark-mode-switcher', [DarkModeController::class, 'switch'])->name('dark-mode-switcher');
+Route::get('color-scheme-switcher/{color_scheme}', [ColorSchemeController::class, 'switch'])->name('color-scheme-switcher');
+
 Route::controller(AuthController::class)->middleware('loggedin')->group(function () {
     Route::get('login', 'loginView')->name('login.index');
     Route::post('login', 'login')->name('login.check');
@@ -25,11 +31,6 @@ Route::controller(AuthController::class)->middleware('loggedin')->group(function
 Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 Route::get('/product/index', [ProductController::class, 'index'])->name('product.index');
 Route::get('/product/{product:slug}', [ProductController::class, 'show'])->name('product.show');
-
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
